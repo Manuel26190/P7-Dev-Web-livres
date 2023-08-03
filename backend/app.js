@@ -1,14 +1,14 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const dataBaseConfig = require('./config/database');
 const Book = require('./models/Book');
 const expressconfig = require('./config/express');
+const booksRoutes = require('./routes/books');
 
 const app = express();//Création de l'applcation express en l'appelant sous forme de variable.
 
-expressconfig(app);//
-dataBaseConfig(app);//connexion à la base de données Mongodb
-
+expressconfig(app);//Configuration du CORS
+//dataBaseConfig(app);
+/*
     async function getAllBooks(req, res) {
       try {
             const books = await Book.find({});
@@ -28,9 +28,23 @@ dataBaseConfig(app);//connexion à la base de données Mongodb
             return res.status(400).json({ error: error });
       }
 };
+*/
+//app.get('/api/books/', getAllBooks);
+//app.get('/api/books/:id', getOneBook);
 
-app.get('/api/books/', getAllBooks);
-app.get('/api/books/:id', getOneBook);
+async function initializeServer() {
+  try {
+        await dataBaseConfig(app);//connexion à la base de données Mongodb
+
+        //app.use('/books/images', express.static('images')); // Serve static files from the 'images' directory
+        app.use('/api/books', booksRoutes); // Mount the books routes
+        //app.use('/api/auth', userRoutes); // Mount the user routes
+  } catch (error) {
+        console.error('Error initializing server:', error);
+        process.exit(1); // Terminate the application if unable to connect to the database
+  }
+};
+initializeServer();
 
 module.exports = app; 
 
