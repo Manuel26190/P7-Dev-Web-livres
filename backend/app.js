@@ -1,36 +1,12 @@
 const express = require('express');
 const dataBaseConfig = require('./config/database');
-const Book = require('./models/Book');
+//const Book = require('./models/Book');
 const expressconfig = require('./config/express');
 const booksRoutes = require('./routes/books');
 
 const app = express();//Création de l'applcation express en l'appelant sous forme de variable.
 
 expressconfig(app);//Configuration du CORS
-//dataBaseConfig(app);
-/*
-    async function getAllBooks(req, res) {
-      try {
-            const books = await Book.find({});
-            //console.log('books', books);
-            return res.status(200).json(books);
-      } catch (error) {
-            return res.status(400).json({ error: error });
-      }
-};
-
-    async function getOneBook(req, res) {
-      try {
-            const book = await Book.findOne({_id: req.params.id});
-            //console.log('book', book);
-            return res.status(200).json(book);
-      } catch (error) {
-            return res.status(400).json({ error: error });
-      }
-};
-*/
-//app.get('/api/books/', getAllBooks);
-//app.get('/api/books/:id', getOneBook);
 
 async function initializeServer() {
   try {

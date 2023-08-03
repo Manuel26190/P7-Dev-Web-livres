@@ -14,6 +14,7 @@ const {
 } = require('../controllers/book');
 
 router.get('/', getAllBooks);
+router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
 
 module.exports = router;
