@@ -12,27 +12,15 @@ async function initializeServer() {
   try {
         await dataBaseConfig(app);//connexion à la base de données Mongodb
 
-        //app.use('/books/images', express.static('images')); // Serve static files from the 'images' directory
-        app.use('/api/books', booksRoutes); // Mount the books routes
-        //app.use('/api/auth', userRoutes); // Mount the user routes
+        //app.use('/books/images', express.static('images')); // Sert des fichiers statiques à partir du repertoire image.
+        app.use('/api/books', booksRoutes); // Routes books.
+        //app.use('/api/auth', userRoutes); // Routes user.
   } catch (error) {
         console.error('Error initializing server:', error);
-        process.exit(1); // Terminate the application if unable to connect to the database
+        process.exit(1); // Arrête l'application si on ne se connecte pas à la base de données.
   }
 };
 initializeServer();
 
 module.exports = app; 
 
-/*
-app.post('/api/books', (req, res, next) => {
-  console.log(req.body); 
-  delete req.body._id;    
-    const book = new Book({
-      ...req.body
-    });
-    book.save()
-      .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-      .catch(error => res.status(400).json({ error }));                      
-  });
-  */
