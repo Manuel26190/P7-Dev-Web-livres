@@ -1,17 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const dataBaseConfig = require('./config/database');
 const Book = require('./models/Book');
 const expressconfig = require('./config/express');
 
 const app = express();//Création de l'applcation express en l'appelant sous forme de variable.
 
-mongoose.connect('mongodb+srv://user:alluser@cluster0.rydbswv.mongodb.net/books',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
-
-expressconfig(app);
+expressconfig(app);//
+dataBaseConfig(app);//connexion à la base de données Mongodb
 
     async function getAllBooks(req, res) {
       try {
