@@ -19,20 +19,30 @@ app.use((req, res, next) => {//middleware qui gère le CORS
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');//permet d'ajouter les headers mentionnés aux requêtes envoyées vers notre API
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');//permet d'envoyer des requêtes avec les méthodes mentionnées ( GET ,POST , etc.).
     next();
-  });    
-
+  });
 
     async function getAllBooks(req, res) {
       try {
             const books = await Book.find({});
-            console.log('books', books);
+            //console.log('books', books);
             return res.status(200).json(books);
       } catch (error) {
             return res.status(400).json({ error: error });
       }
 };
 
+    async function getOneBook(req, res) {
+      try {
+            const book = await Book.findOne({_id: req.params.id});
+            //console.log('book', book);
+            return res.status(200).json(book);
+      } catch (error) {
+            return res.status(400).json({ error: error });
+      }
+};
+
 app.get('/api/books/', getAllBooks);
+app.get('/api/books/:id', getOneBook);
 
 module.exports = app; 
 
