@@ -1,6 +1,5 @@
 const express = require('express');
 const dataBaseConfig = require('./config/database');
-//const Book = require('./models/Book');
 const expressconfig = require('./config/express');
 const booksRoutes = require('./routes/books');
 

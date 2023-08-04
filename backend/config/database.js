@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+const mongoUri = process.env.MONGO_URI;
 
 module.exports = async (app) => {
-    mongoose.connect('mongodb+srv://user:alluser@cluster0.rydbswv.mongodb.net/books',
+    mongoose.connect(mongoUri,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
