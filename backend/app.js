@@ -11,7 +11,7 @@ async function initializeServer() {
   try {
         await dataBaseConfig(app);//connexion à la base de données Mongodb
 
-        //app.use('/books/images', express.static('images')); // Sert des fichiers statiques à partir du repertoire image.
+        //app.use('/books/images', express.static('images'));//Sert des fichiers statiques à partir du repertoire image.
         app.use('/api/books', booksRoutes); // Routes books.
         //app.use('/api/auth', userRoutes); // Routes user.
   } catch (error) {
