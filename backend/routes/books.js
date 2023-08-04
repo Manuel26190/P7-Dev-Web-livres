@@ -18,6 +18,7 @@ router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
 router.put('/:bookId', updateBook);
 router.delete('/:bookId', deleteBook);
+router.post('/', );
 router.post('/', addNewBook);
 router.post('/:bookId/rating', rateBook);
 
