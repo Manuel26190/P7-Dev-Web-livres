@@ -9,16 +9,16 @@ const {
     updateBook,
     bestRatedBooks,
     deleteBook,
-    rateBook,
+    rateBook,    
 
 } = require('../controllers/book');
-const { updateOne } = require('../models/Book');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
-router.put('/bookId', updateBook);
-router.delete('/bookId', deleteBook);
+router.put('/:bookId', updateBook);
+router.delete('/:bookId', deleteBook);
 router.post('/', addNewBook);
+router.post('/:bookId/rating', rateBook);
 
 module.exports = router;
