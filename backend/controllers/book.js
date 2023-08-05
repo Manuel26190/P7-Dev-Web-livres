@@ -35,6 +35,14 @@ async function bestRatedBooks(req, res) {//GET best rating
     }
 };
 
+async function addNewBook (req, res) {//POST new book
+    try {
+        res.json({message : "post new book réussie"})
+    } catch {
+        res.status(400).json({ error: error });
+    }
+};
+
 async function updateBook(req, res) {//PUT book
     try {
         res.json({message : "put réussie"})
@@ -51,15 +59,7 @@ async function deleteBook(req, res) {//DELETE book
     }
 };
 
-async function addNewBook (req, res) {//POST new book
-    try {
-        res.json({message : "post new book réussie"})
-    } catch {
-        res.status(400).json({ error: error });
-    }
-};
-
-async function rateBook (req, res) {//POST new book
+async function rateBook (req, res) {//POST noter un livre
     try {
         res.json({message : "post rate book réussie"})
     } catch {

@@ -15,9 +15,9 @@ const authentificationToken = require('../middleware/auth');
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
-router.post('/',authentificationToken, addNewBook);
+router.post('/',/*authentificationToken,*/ addNewBook);
 router.put('/:bookId', authentificationToken, updateBook);
 router.delete('/:bookId', authentificationToken, deleteBook);
-router.post('/:bookId/rating', authentificationToken, rateBook);
+router.post('/:bookId/rating', /*authentificationToken,*/ rateBook);
 
 module.exports = router;
