@@ -1,7 +1,6 @@
 const router = require('express').Router();//Création d'un router dans express
 const express = require('express');
 const app = express();
-//const Book = require('../models/Book');
 const {
     getAllBooks,
     getOneBook,
@@ -9,17 +8,16 @@ const {
     updateBook,
     bestRatedBooks,
     deleteBook,
-    rateBook,    
-
+    rateBook,
 } = require('../controllers/book');
+const authentificationToken = require('../middleware/auth');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
-router.put('/:bookId', updateBook);
-router.delete('/:bookId', deleteBook);
-router.post('/', );
-router.post('/', addNewBook);
-router.post('/:bookId/rating', rateBook);
+router.post('/',authentificationToken, addNewBook);
+router.put('/:bookId', authentificationToken, updateBook);
+router.delete('/:bookId', authentificationToken, deleteBook);
+router.post('/:bookId/rating', authentificationToken, rateBook);
 
 module.exports = router;
