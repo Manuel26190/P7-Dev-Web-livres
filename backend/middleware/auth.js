@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
         req.auth = {//Création de l'objet auth avec un champ userId.
             userId: userId
         };
-        //next();
+        next();
     } catch(error) {
         res.status(401).json({error});
     }

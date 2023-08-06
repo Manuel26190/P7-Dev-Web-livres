@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "scripts": {    
+    "test": "run-script-os",
+    "test:win32": "echo 'del whatever you want in Windows 32/64'",
+    "test:darwin:linux": "echo 'You can combine OS tags and rm all the things!'",
+    "test:default": "echo 'This will run on any platform that does not have its own script'"
   },
   "author": "",
   "license": "ISC",

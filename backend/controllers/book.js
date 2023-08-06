@@ -37,7 +37,7 @@ async function bestRatedBooks(req, res) {//GET best rating
 
 async function addNewBook (req, res) {//POST new book
     try {
-        res.json({message : "post new book réussie"})
+        res.json(console.log(req.body)/*{message : "post new book réussie"}*/)
     } catch {
         res.status(400).json({ error: error });
     }
@@ -61,7 +61,7 @@ async function deleteBook(req, res) {//DELETE book
 
 async function rateBook (req, res) {//POST noter un livre
     try {
-        res.json({message : "post rate book réussie"})
+        res.json(console.log(req.body)/*{message : "post rate book réussie"}*/)
     } catch {
         res.status(400).json({ error: error });
     }
