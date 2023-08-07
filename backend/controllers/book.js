@@ -88,6 +88,7 @@ async function deleteBook(req, res) {
           }
           // Supprimer le fichier image associée.
           const imagePath = bookToDelete.imageUrl.split('/').pop(); // Extraire le nom du fichier image de l'URL de l'image.
+          //fonction unlink du package fs pour supprimer ce fichier, en lui passant le fichier à supprimer et le callback à exécuter une fois ce fichier supprimé.
           fs.unlink(`images/${imagePath}`, (err) => {
                 if (err) {
                       console.error('Erreur lors de la suppression du fichier image:', err);
