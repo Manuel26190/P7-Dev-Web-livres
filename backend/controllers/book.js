@@ -72,7 +72,7 @@ async function updateBook (req, res) {//PUT modifier les informations d'un livre
         });
  };
 
-async function deleteBook(req, res) {
+async function deleteBook(req, res) {//DEL supprimer un livre
     // Extraction du bookId des paramètres de requête.
     const id = req.params.bookId;
     // Vérifier si le livre n'a pas été trouvé.
@@ -104,7 +104,7 @@ async function deleteBook(req, res) {
 
 async function rateBook (req, res) {//POST noter un livre
     try {
-        res.json(console.log(req.body)/*{message : "post rate book réussie"}*/)
+        res.json({message : "post rate book réussie"})
     } catch {
         res.status(400).json({ error: error });
     }
