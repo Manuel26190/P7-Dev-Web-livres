@@ -72,24 +72,34 @@ async function updateBook (req, res) {//PUT modifier les informations d'un livre
         });
  };
 
-async function deleteBook(req, res) {//DELETE pour supprimer un livre
-     Book.findOne({ _id: req.params.id})
-    .then((book) => {
-        if (book.userId != req.auth.userId ){
-            res.status(401).json({ message : 'Non autorisé'});
-        } else {
-            const filename = book.imageUrl.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                Book.deleteOne({_id: req.params.id})
-                    .then(() => {res.status(200).json({message: 'Livre supprimé !'})})
-                    .catch(error => res.status(401).json({error}));
-            });
-        }
-    })
-    .catch(error => {
-        res.status(500).json({error});
-    })
-};
+async function deleteBook(req, res) {
+    // Extraction du bookId des paramètres de requête.
+    const id = req.params.bookId;
+    // Vérifier si le livre n'a pas été trouvé.
+    if (!id) {
+          return res.status(404).json({ message: 'livre non trouvé' });
+    }
+    try {
+          // Trouver et supprimer le livre par son identifiant en utilisant Book.findByIdAndDelete()
+          const bookToDelete = await Book.findByIdAndDelete(id);
+          // Vérifier si le livre n'a pas été trouvé.
+          if (!bookToDelete) {
+                return res.status(404).json({ message: 'livre non trouvé' });
+          }
+          // Supprimer le fichier image associée.
+          const imagePath = bookToDelete.imageUrl.split('/').pop(); // Extraire le nom du fichier image de l'URL de l'image.
+          fs.unlink(`images/${imagePath}`, (err) => {
+                if (err) {
+                      console.error('Erreur lors de la suppression du fichier image:', err);
+                }
+          });
+          return res
+                .status(200)
+                .json({ message: 'Livre supprimé !' });
+    } catch (error) {
+          return res.status(500).json({ message: error.message });
+    }
+}
 
 async function rateBook (req, res) {//POST noter un livre
     try {
