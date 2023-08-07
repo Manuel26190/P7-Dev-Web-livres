@@ -1,6 +1,6 @@
 const Book = require('../models/Book');
 const fs = require('fs');
-//const multer = require('multer');
+const multer = require('multer');
 
 async function getAllBooks(req, res) {//middleware get pour tous les livres
     try {
@@ -37,33 +37,58 @@ async function bestRatedBooks(req, res) {//GET best rating
 };
 
 async function addNewBook (req, res) {//POST ajouter un nouveau livre.
-   const bookObject = JSON.parse(req.body.book);
-   delete bookObject._id;
-   delete bookObject._userId;
+   const bookObject = JSON.parse(req.body.book);//analyse de l'objet pour otbenir un objet utilisable.
+   delete bookObject._id;//Supp de l'id et de l'userId par mesure de sécurité,
+   delete bookObject._userId;//l'userId est remplacé en base de données par le _userId extrait du token par le middleware d'authentification. 
    const book = new Book({
        ...bookObject,
        userId: req.auth.userId,
-       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
    }); 
-   book.save()//enregistrement cet objet dans la base de données.  
+   book.save()//enregistrement de cet objet dans la base de données.  
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
    .catch(error => { res.status(400).json( { error })})
 };
 
-async function updateBook(req, res) {//PUT book
-    try {
-        res.json({message : "put réussie"})
-    } catch {
-        res.status(400).json({ error: error });
-    }
-};
+async function updateBook (req, res) {//PUT modifier les informations d'un livre
+    const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
+        ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };//sinon je récupère l'objet dans le corps de la requête.
+  
+    delete bookObject._userId;
+   Book.findOne({_id: req.params.id})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
+        .then((book) => {
+            if (book.userId != req.auth.userId) {
+                res.status(401).json({ message : 'Non autorisé'});
+            } else {
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
+                .then(() => res.status(200).json({message : 'Objet modifié!'}))
+                .catch(error => res.status(401).json({ error }));
+            }
+        })
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
+ };
 
-async function deleteBook(req, res) {//DELETE book
-    try {
-        res.json({message : "delete réussie"})
-    } catch {
-        res.status(400).json({ error: error });
-    }
+async function deleteBook(req, res) {//DELETE pour supprimer un livre
+     Book.findOne({ _id: req.params.id})
+    .then((book) => {
+        if (book.userId != req.auth.userId ){
+            res.status(401).json({ message : 'Non autorisé'});
+        } else {
+            const filename = book.imageUrl.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                Book.deleteOne({_id: req.params.id})
+                    .then(() => {res.status(200).json({message: 'Livre supprimé !'})})
+                    .catch(error => res.status(401).json({error}));
+            });
+        }
+    })
+    .catch(error => {
+        res.status(500).json({error});
+    })
 };
 
 async function rateBook (req, res) {//POST noter un livre

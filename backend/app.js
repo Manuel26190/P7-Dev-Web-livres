@@ -11,9 +11,11 @@ expressconfig(app);//Configuration du CORS
 
 async function initializeServer() {
   try {
-        await dataBaseConfig(app);//connexion à la base de données Mongodb
-      app.use('/images', express.static(path.join(__dirname, 'images')));
-        //app.use('/books/images', express.static('images'));//Sert des fichiers statiques à partir du repertoire images.
+        await dataBaseConfig(app);//connexion à la base de données Mongodb.
+        
+//indique à Express qu'il faut gérer la ressource images de manière statique 
+//(un sous-répertoire de notre répertoire de base, __dirname) à chaque fois qu'elle reçoit une requête vers la route /images.
+        app.use('/images', express.static(path.join(__dirname, 'images')));        
         app.use('/api/books', booksRoutes); // Routes books.
         app.use('/api/auth', userRoutes); // Routes user.
   } catch (error) {
