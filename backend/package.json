@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "scripts": {    
+  "scripts": {
     "test": "run-script-os",
     "test:win32": "echo 'del whatever you want in Windows 32/64'",
     "test:darwin:linux": "echo 'You can combine OS tags and rm all the things!'",
@@ -19,7 +19,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongodb": "^5.7.0",
     "mongoose": "^7.4.1",
-    "mongoose-unique-validator": "^4.0.0"
+    "mongoose-unique-validator": "^4.0.0",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

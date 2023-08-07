@@ -1,5 +1,6 @@
 const Book = require('../models/Book');
 const fs = require('fs');
+//const multer = require('multer');
 
 async function getAllBooks(req, res) {//middleware get pour tous les livres
     try {
@@ -35,12 +36,18 @@ async function bestRatedBooks(req, res) {//GET best rating
     }
 };
 
-async function addNewBook (req, res) {//POST new book
-    try {
-        res.json(console.log(req.body)/*{message : "post new book réussie"}*/)
-    } catch {
-        res.status(400).json({ error: error });
-    }
+async function addNewBook (req, res) {//POST ajouter un nouveau livre.
+   const bookObject = JSON.parse(req.body.book);
+   delete bookObject._id;
+   delete bookObject._userId;
+   const book = new Book({
+       ...bookObject,
+       userId: req.auth.userId,
+       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+   }); 
+   book.save()//enregistrement cet objet dans la base de données.  
+   .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
+   .catch(error => { res.status(400).json( { error })})
 };
 
 async function updateBook(req, res) {//PUT book

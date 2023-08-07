@@ -11,11 +11,12 @@ const {
     rateBook,
 } = require('../controllers/book');
 const authentificationToken = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
-router.post('/',/*authentificationToken*/ addNewBook);
+router.post('/', authentificationToken, multer, addNewBook);
 router.put('/:bookId', authentificationToken, updateBook);
 router.delete('/:bookId', authentificationToken, deleteBook);
 router.post('/:bookId/rating', /*authentificationToken,*/ rateBook);
