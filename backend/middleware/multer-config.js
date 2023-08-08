@@ -21,3 +21,12 @@ const storage = multer.diskStorage({//configure le chemin et le nom de fichier p
 });
 
 module.exports = multer({storage: storage}).single('image');//gestion uniquement des fichiers image.
+/*
+// vérification supplémentaire pour vous assurer que le type MIME est correctement géré par votre application.
+    if (extension) {
+      callback(null, name + Date.now() + '.' + extension);
+    } else {
+      callback(new Error('Invalid file type'));
+    }
+
+    */
