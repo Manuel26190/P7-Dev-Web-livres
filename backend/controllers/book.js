@@ -50,27 +50,27 @@ async function addNewBook (req, res) {//POST ajouter un nouveau livre.
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
    .catch(error => { res.status(400).json( { error })})
 };
-/*
+
 async function updateBook(req, res) {
     const { bookId } = req.params;
     // Check if the bookId parameter is provided
     if (!bookId) {
-          return res.status(404).json({ message: 'Book not found' });
+          return res.status(404).json({ message: 'Livre non trouvé' });
     }
 
     try {
-          // Find the book in the database based on the bookId
+          // Recherche du livre dans la base de données avec son bookId.
           const book = await Book.findOne({ _id: bookId });
           let imageUrl = book.imageUrl;
-          // Check if a new image file is uploaded
-          // Extract the book details from the request body
+          // Vérifier si une nouvelle image est chargée.
+          // Extraction des détails du livre de la requête body.
           if (req.file) {
-                // Delete the old image file
-                const oldImagePath = book.imageUrl.split('/').pop(); // Extract the old image file name from the imageUrl
+                // Suppression de l'ancien fichier image
+                const oldImagePath = book.imageUrl.split('/').pop(); // Extraction de l'ancien fichier image de l'URL.
                 fs.unlink(`images/${oldImagePath}`, (err) => {
                       if (err) {
                             console.error(
-                                  'Error deleting old image file:',
+                                  "Erreur de suppression de l'ancienne image:",
                                   err
                             );
                       }
@@ -86,53 +86,53 @@ async function updateBook(req, res) {
                 year,
                 genre,
           };
-          // Update the imageUrl field if a new image is uploaded
+          // Mise à jour du champ imageUrl si une nouvelle image est téléchargée.
           if (imageUrl) {
                 bookUpdate.imageUrl = imageUrl;
           }
-          // Update and retrieve the updated book document
+          // Mise à jour et récupération document livre mis à jour.
           const updatedBook = await Book.findByIdAndUpdate(
                 bookId,
                 bookUpdate,
                 {
-                      new: true, // option in mongoose that returns the updated document as the result of findByIdAndUpdate()
-                      runValidators: true, // enable running validators during the update
+                      new: true, // L'option dans Mongoose qui renvoie le document mis à jour en tant que résultat de findByIdAndUpdate().
+                      runValidators: true, // Active l'exécution des validateurs lors de la mise à jour.
                 }
           );
-          // Check if the book document was not found
+          // Vérification si le livre n'est pas trouvé.
           if (!updatedBook) {
-                return res.status(404).json({ message: 'Book not found' });
+                return res.status(404).json({ message: 'Livre non trouvé' });
           }
-          // Return the updated book document as the response
+          // Renvoyer le document du livre mis à jour en tant que réponse.
           return res.status(200).json(updatedBook);
     } catch (error) {
-          // Handle any errors that occurred during the update process
+          // Gestion de toutes les erreurs survenues pendant le processus de mise à jour.
           res.status(500).json({ message: error.message });
     }
 }
-*/
-async function updateBook (req, res) {//PUT modifier les informations d'un livre    
-//console.log('debug');    
-    const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
-        ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
-    //console.log('req', req);   
-    delete bookObject._userId;
-   Book.findOne({_id: req.params.id})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
-        .then((book) => {
-            if (book.userId !== req.auth.userId) {
-                res.status(401).json({ message : 'Non autorisé'});
-            } else {
-                Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
-                .then(() => res.status(200).json({message : 'Objet modifié!'}))
-                .catch(error => res.status(401).json({ error }));
-            }
-        })
-        .catch((error) => {
-            res.status(400).json({ error });
-        });
- };
+
+// async function updateBook (req, res) {//PUT modifier les informations d'un livre    
+// //console.log('debug');    
+//     const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
+//         ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
+//         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+//     } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
+//     //console.log('req', req);   
+//     delete bookObject._userId;
+//    Book.findOne({_id: req.params.id})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
+//         .then((book) => {
+//             if (book.userId !== req.auth.userId) {
+//                 res.status(401).json({ message : 'Non autorisé'});
+//             } else {
+//                 Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
+//                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
+//                 .catch(error => res.status(401).json({ error }));
+//             }
+//         })
+//         .catch((error) => {
+//             res.status(400).json({ error });
+//         });
+//  };
 
 async function deleteBook(req, res) {//DEL supprimer un livre
     // Extraction du bookId des paramètres de requête.
@@ -221,7 +221,7 @@ async function rateBook (req, res) {//POST noter un livre
 //     }
 // };
 // async function updateBook (req, res) {//POST un livre
-//     try {
+//     try {        
 //         res.json({message : "put update book réussie"})
 //     } catch {
 //         res.status(400).json({ error: error });

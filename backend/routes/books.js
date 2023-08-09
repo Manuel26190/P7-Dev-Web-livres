@@ -18,7 +18,7 @@ router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
 router.post('/', authentificationToken, multer, addNewBook);
-router.put('/:bookId', authentificationToken, multer, updateBook);
+router.put('/:bookId', authentificationToken, isOwner, multer, updateBook);
 router.delete('/:bookId', authentificationToken, isOwner, deleteBook);
 router.post('/:bookId/rating', authentificationToken, rateBook);
 
