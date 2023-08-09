@@ -12,13 +12,14 @@ const {
 } = require('../controllers/book');
 const authentificationToken = require('../middleware/auth');
 const multer = require('../middleware/multer-config');
+const {isOwner} = require('../middleware/guards');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
 router.post('/', authentificationToken, multer, addNewBook);
 router.put('/:bookId', authentificationToken, multer, updateBook);
-router.delete('/:bookId', authentificationToken, deleteBook);
+router.delete('/:bookId', authentificationToken, isOwner, deleteBook);
 router.post('/:bookId/rating', authentificationToken, rateBook);
 
 module.exports = router;
