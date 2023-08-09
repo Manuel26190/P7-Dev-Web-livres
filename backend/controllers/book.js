@@ -51,88 +51,86 @@ async function addNewBook (req, res) {//POST ajouter un nouveau livre.
    .catch(error => { res.status(400).json( { error })})
 };
 
-async function updateBook(req, res) {
-    const { bookId } = req.params;
-    // Check if the bookId parameter is provided
-    if (!bookId) {
-          return res.status(404).json({ message: 'Livre non trouvé' });
-    }
+// async function updateBook(req, res) {
+//     const { bookId } = req.params;
+//     // Check if the bookId parameter is provided
+//     if (!bookId) {
+//           return res.status(404).json({ message: 'Livre non trouvé' });
+//     }
 
-    try {
-          // Recherche du livre dans la base de données avec son bookId.
-          const book = await Book.findOne({ _id: bookId });
-          let imageUrl = book.imageUrl;
-          // Vérifier si une nouvelle image est chargée.
-          // Extraction des détails du livre de la requête body.
-          if (req.file) {
-                // Suppression de l'ancien fichier image
-                const oldImagePath = book.imageUrl.split('/').pop(); // Extraction de l'ancien fichier image de l'URL.
-                fs.unlink(`images/${oldImagePath}`, (err) => {
-                      if (err) {
-                            console.error(
-                                  "Erreur de suppression de l'ancienne image:",
-                                  err
-                            );
-                      }
-                });
-                const imagePath =
-                      req.file.originalname.split('.')[0] + '.' + 'webp';
-                imageUrl = `http://localhost:4000/books/images/${imagePath}`;
-          }
-          const { title, author, year, genre } = JSON.parse(req.body.book);
-          const bookUpdate = {
-                title,
-                author,
-                year,
-                genre,
-          };
-          // Mise à jour du champ imageUrl si une nouvelle image est téléchargée.
-          if (imageUrl) {
-                bookUpdate.imageUrl = imageUrl;
-          }
-          // Mise à jour et récupération document livre mis à jour.
-          const updatedBook = await Book.findByIdAndUpdate(
-                bookId,
-                bookUpdate,
-                {
-                      new: true, // L'option dans Mongoose qui renvoie le document mis à jour en tant que résultat de findByIdAndUpdate().
-                      runValidators: true, // Active l'exécution des validateurs lors de la mise à jour.
-                }
-          );
-          // Vérification si le livre n'est pas trouvé.
-          if (!updatedBook) {
-                return res.status(404).json({ message: 'Livre non trouvé' });
-          }
-          // Renvoyer le document du livre mis à jour en tant que réponse.
-          return res.status(200).json(updatedBook);
-    } catch (error) {
-          // Gestion de toutes les erreurs survenues pendant le processus de mise à jour.
-          res.status(500).json({ message: error.message });
-    }
-}
+//     try {
+//           // Recherche du livre dans la base de données avec son bookId.
+//           const book = await Book.findOne({ _id: bookId });
+//           let imageUrl = book.imageUrl;
+//           // Vérifier si une nouvelle image est chargée.
+//           // Extraction des détails du livre de la requête body.
+//           if (req.file) {
+//                 // Suppression de l'ancien fichier image
+//                 const oldImagePath = book.imageUrl.split('/').pop(); // Extraction de l'ancien fichier image de l'URL.
+//                 fs.unlink(`images/${oldImagePath}`, (err) => {
+//                       if (err) {
+//                             console.error(
+//                                   "Erreur de suppression de l'ancienne image:",
+//                                   err
+//                             );
+//                       }
+//                 });
+//                 const imagePath =
+//                       req.file.originalname.split('.')[0] + '.' + 'webp';
+//                 imageUrl = `http://localhost:4000/books/images/${imagePath}`;
+//           }
+//           const { title, author, year, genre } = JSON.parse(req.body.book);
+//           const bookUpdate = {
+//                 title,
+//                 author,
+//                 year,
+//                 genre,                
+//           };
+//           // Mise à jour du champ imageUrl si une nouvelle image est téléchargée.
+//           if (imageUrl) {
+//                 bookUpdate.imageUrl = imageUrl;
+//           }
+//           // Mise à jour et récupération document livre mis à jour.
+//           const updatedBook = await Book.findByIdAndUpdate(
+//                 bookId,
+//                 bookUpdate,
+//                 {
+//                       new: true, // L'option dans Mongoose qui renvoie le document mis à jour en tant que résultat de findByIdAndUpdate().
+//                       runValidators: true, // Active l'exécution des validateurs lors de la mise à jour.
+//                 }
+//           );
+//           // Vérification si le livre n'est pas trouvé.
+//           if (!updatedBook) {
+//                 return res.status(404).json({ message: 'Livre non trouvé' });
+//           }
+//           // Renvoyer le document du livre mis à jour en tant que réponse.
+//           return res.status(200).json(updatedBook);
+//     } catch (error) {
+//           // Gestion de toutes les erreurs survenues pendant le processus de mise à jour.
+//           res.status(500).json({ message: error.message });
+//     }
+// }
 
-// async function updateBook (req, res) {//PUT modifier les informations d'un livre    
-// //console.log('debug');    
-//     const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
-//         ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
-//         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//     } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
-//     //console.log('req', req);   
-//     delete bookObject._userId;
-//    Book.findOne({_id: req.params.id})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
-//         .then((book) => {
-//             if (book.userId !== req.auth.userId) {
-//                 res.status(401).json({ message : 'Non autorisé'});
-//             } else {
-//                 Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
-//                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
-//                 .catch(error => res.status(401).json({ error }));
-//             }
-//         })
-//         .catch((error) => {
-//             res.status(400).json({ error });
-//         });
-//  };
+async function updateBook (req, res) {//PUT modifier les informations d'un livre    
+    const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
+        ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
+        delete bookObject._userId;
+   Book.findOne({_id: req.params.bookId})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
+        .then((book) => {
+            if (book.userId != req.auth.userId) {
+                res.status(401).json({ message : 'Non autorisé'});
+            } else {                
+                Book.updateOne({ _id: req.params.bookId}, { ...bookObject, _id: req.params.id})
+                .then(() => res.status(200).json({message : 'Objet modifié!'}))
+                .catch(error => res.status(401).json({ error }));
+            }
+        })
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
+ };
 
 async function deleteBook(req, res) {//DEL supprimer un livre
     // Extraction du bookId des paramètres de requête.
