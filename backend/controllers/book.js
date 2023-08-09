@@ -2,6 +2,7 @@ const Book = require('../models/Book');
 const fs = require('fs');
 const multer = require('multer');
 
+
 async function getAllBooks(req, res) {//middleware get pour tous les livres
     try {
         const books = await Book.find({});
@@ -49,17 +50,78 @@ async function addNewBook (req, res) {//POST ajouter un nouveau livre.
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
    .catch(error => { res.status(400).json( { error })})
 };
+/*
+async function updateBook(req, res) {
+    const { bookId } = req.params;
+    // Check if the bookId parameter is provided
+    if (!bookId) {
+          return res.status(404).json({ message: 'Book not found' });
+    }
 
-async function updateBook (req, res) {//PUT modifier les informations d'un livre
+    try {
+          // Find the book in the database based on the bookId
+          const book = await Book.findOne({ _id: bookId });
+          let imageUrl = book.imageUrl;
+          // Check if a new image file is uploaded
+          // Extract the book details from the request body
+          if (req.file) {
+                // Delete the old image file
+                const oldImagePath = book.imageUrl.split('/').pop(); // Extract the old image file name from the imageUrl
+                fs.unlink(`images/${oldImagePath}`, (err) => {
+                      if (err) {
+                            console.error(
+                                  'Error deleting old image file:',
+                                  err
+                            );
+                      }
+                });
+                const imagePath =
+                      req.file.originalname.split('.')[0] + '.' + 'webp';
+                imageUrl = `http://localhost:4000/books/images/${imagePath}`;
+          }
+          const { title, author, year, genre } = JSON.parse(req.body.book);
+          const bookUpdate = {
+                title,
+                author,
+                year,
+                genre,
+          };
+          // Update the imageUrl field if a new image is uploaded
+          if (imageUrl) {
+                bookUpdate.imageUrl = imageUrl;
+          }
+          // Update and retrieve the updated book document
+          const updatedBook = await Book.findByIdAndUpdate(
+                bookId,
+                bookUpdate,
+                {
+                      new: true, // option in mongoose that returns the updated document as the result of findByIdAndUpdate()
+                      runValidators: true, // enable running validators during the update
+                }
+          );
+          // Check if the book document was not found
+          if (!updatedBook) {
+                return res.status(404).json({ message: 'Book not found' });
+          }
+          // Return the updated book document as the response
+          return res.status(200).json(updatedBook);
+    } catch (error) {
+          // Handle any errors that occurred during the update process
+          res.status(500).json({ message: error.message });
+    }
+}
+*/
+async function updateBook (req, res) {//PUT modifier les informations d'un livre    
+//console.log('debug');    
     const bookObject = req.file ? {//Vérification si il y a un champ file dans la requête.
         ...JSON.parse(req.body.book),//je récupère cet objet en parsant la chaine de caractère et en recréant l'URL de l'image.
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };//sinon je récupère l'objet dans le corps de la requête.
-  
+    } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
+    //console.log('req', req);   
     delete bookObject._userId;
    Book.findOne({_id: req.params.id})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
         .then((book) => {
-            if (book.userId != req.auth.userId) {
+            if (book.userId !== req.auth.userId) {
                 res.status(401).json({ message : 'Non autorisé'});
             } else {
                 Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
@@ -100,8 +162,50 @@ async function deleteBook(req, res) {//DEL supprimer un livre
     } catch (error) {
           return res.status(500).json({ message: error.message });
     }
-}
+};
 
+// async function rateBook(req, res) {
+//     const id = req.params.bookId;
+//     const { userId, rating } = req.body;
+//     if (userId !== req.auth.userId) {
+//           return res.status(401).json({ message: 'Unauthorized access' });
+//     }
+//     try {
+//           // Validate rating range
+//           if (rating < 1 || rating > 5) {
+//                 return res.status(400).json({
+//                       message: 'Invalid rating. Rating must be between 1 and 5',
+//                 });
+//           }
+//           // Find the book by its ID
+//           const book = await Book.findById(id);
+//           // Check if the book exists
+//           if (!book) {
+//                 return res.status(404).json({ message: 'Book not found' });
+//           }
+//           // Check if the user has already rated the book
+//           const existingRating = book.ratings.find(
+//                 (r) => r.userId === userId
+//           );
+//           if (existingRating) {
+//                 return res.status(400).json({
+//                       message: 'User has already rated this book',
+//                 });
+//           }
+//           // Add the new rating to the book's ratings array
+//           book.ratings.push({ userId, grade: rating });
+//           // Calculate the new average rating
+//           const totalRatings = book.ratings.length;
+//           const sumGrades = book.ratings.reduce((acc, r) => acc + r.grade, 0);
+//           book.averageRating = (sumGrades / totalRatings).toFixed(1);
+//           // Save the updated book
+//           const updatedBook = await book.save();
+
+//           return res.status(200).json(updatedBook);
+//     } catch (error) {
+//           return res.status(500).json({ message: error.message });
+//     }
+// }
 async function rateBook (req, res) {//POST noter un livre
     try {
         res.json({message : "post rate book réussie"})
@@ -109,6 +213,21 @@ async function rateBook (req, res) {//POST noter un livre
         res.status(400).json({ error: error });
     }
 };
+// async function addNewBook (req, res) {//POST un livre
+//     try {
+//         res.json({message : "post add book réussie"})
+//     } catch {
+//         res.status(400).json({ error: error });
+//     }
+// };
+// async function updateBook (req, res) {//POST un livre
+//     try {
+//         res.json({message : "put update book réussie"})
+//     } catch {
+//         res.status(400).json({ error: error });
+//     }
+// };
+
 
 module.exports = {
     getAllBooks,
