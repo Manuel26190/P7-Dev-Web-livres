@@ -1,9 +1,28 @@
+// const multer = require('multer');
+
+// const storage = multer.memoryStorage(); // Use memory storage for handling file uploads
+// // Filter function to check if the uploaded file is an image
+// const filter = (req, file, callback) => {
+//       if (file.mimetype.split('/')[0] === 'image') {
+//             callback(null, true); // Accept the file if it's an image
+//       } else {
+//             callback(new Error('Only images allowed')); // Reject the file if it's not an image
+//       }
+// };
+
+// const upload = multer({ storage: storage, fileFilter: filter }).single('image'); // Single file upload middleware, accepting only images
+
+// module.exports = {
+//       upload,
+// };
+
 const multer = require('multer');
 
 const MIME_TYPES = {
   'image/jpg': 'jpg',
   'image/jpeg': 'jpg',
-  'image/png': 'png'
+  'image/png': 'png',
+  'image/webp': 'webp'
 };
 
 const storage = multer.diskStorage({//configure le chemin et le nom de fichier pour les fichiers entrants.
@@ -21,12 +40,7 @@ const storage = multer.diskStorage({//configure le chemin et le nom de fichier p
 });
 
 module.exports = multer({storage: storage}).single('image');//gestion uniquement des fichiers image.
-/*
-// vérification supplémentaire pour vous assurer que le type MIME est correctement géré par votre application.
-    if (extension) {
-      callback(null, name + Date.now() + '.' + extension);
-    } else {
-      callback(new Error('Invalid file type'));
-    }
 
-    */
+
+
+

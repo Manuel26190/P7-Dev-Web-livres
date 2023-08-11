@@ -11,8 +11,10 @@ const {
     rateBook,
 } = require('../controllers/book');
 const authentificationToken = require('../middleware/auth');
-const multer = require('../middleware/multer-config');
+const {upload} = require('../middleware/multer-config');//jonh
+const multer = require('../middleware/multer-config');// moi
 const {isOwner} = require('../middleware/guards');
+//const {resizeImage} = require('../middleware/sharp');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
