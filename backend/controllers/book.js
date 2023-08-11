@@ -118,7 +118,8 @@ async function updateBook (req, res) {//PUT modifier les informations d'un livre
     } : { ...(req.body) };//sinon je récupère l'objet dans le corps de la requête.
         delete bookObject._userId;
    Book.findOne({_id: req.params.bookId})//Vérification si c'est bien l'utilisateur a qui appartient cet objet qui cherche a le modifier.
-        .then((book) => {
+        try {
+            const book = await Book.findOne({_id:  req.params.bookId});
             if (book.userId != req.auth.userId) {
                 res.status(401).json({ message : 'Non autorisé'});
             } else {                
@@ -126,10 +127,22 @@ async function updateBook (req, res) {//PUT modifier les informations d'un livre
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
                 .catch(error => res.status(401).json({ error }));
             }
-        })
-        .catch((error) => {
+            if (req.file) {
+                // Supprimer le fichier image associée.                
+                //fonction unlink du package fs pour supprimer ce fichier, en lui passant le fichier à supprimer et le callback à exécuter une fois ce fichier supprimé.
+                fs.unlink(`images/${imagePath}`, (err) => {
+                    if (err) {
+                        console.error('Erreur lors de la suppression du fichier image:', err);
+                    } else {
+                        console.log('');
+                    }
+                });
+            }
+            
+        }
+        catch (error) {
             res.status(400).json({ error });
-        });
+        }
  };
 
 async function deleteBook(req, res) {//DEL supprimer un livre
