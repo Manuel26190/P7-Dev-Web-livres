@@ -1,6 +1,7 @@
 const router = require('express').Router();//Création d'un router dans express
 const express = require('express');
 const app = express();
+
 const {
     getAllBooks,
     getOneBook,
@@ -11,16 +12,15 @@ const {
     rateBook,
 } = require('../controllers/book');
 const authentificationToken = require('../middleware/auth');
-const {upload} = require('../middleware/multer-config');//jonh
-const multer = require('../middleware/multer-config');// moi
+const {upload} = require('../middleware/multer-config');
 const {isOwner} = require('../middleware/guards');
-//const {resizeImage} = require('../middleware/sharp');
+const {resizeImage} = require('../middleware/sharp');
 
 router.get('/', getAllBooks);
 router.get('/bestrating', bestRatedBooks);
 router.get('/:bookId', getOneBook);
-router.post('/', authentificationToken, multer, addNewBook);
-router.put('/:bookId', authentificationToken, isOwner, multer, updateBook);
+router.post('/', authentificationToken, upload, resizeImage, addNewBook);
+router.put('/:bookId', authentificationToken, isOwner, updateBook);
 router.delete('/:bookId', authentificationToken, isOwner, deleteBook);
 router.post('/:bookId/rating', authentificationToken, rateBook);
 
