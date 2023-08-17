@@ -3,7 +3,7 @@ const fs = require('fs');
 const multer = require('multer');
 
 
-async function getAllBooks(req, res) {//middleware get pour tous les livres
+async function getAllBooks(req, res, next) {//middleware get pour tous les livres
     try {
         const books = await Book.find({});
         //console.log('books', books);
@@ -13,7 +13,7 @@ async function getAllBooks(req, res) {//middleware get pour tous les livres
     }
 };
 
-async function getOneBook(req, res) {//middleware get pour un livre
+async function getOneBook(req, res, next) {//middleware get pour un livre
     const id = req.params.bookId;//récupére le paramètre bookId d'une requête 
         try {
             const book = await Book.findOne({ _id: id });
@@ -37,16 +37,19 @@ async function bestRatedBooks(req, res) {//GET best rating
     }
 };
 
-async function addNewBook (req, res) {//POST ajouter un nouveau livre.
+async function addNewBook (req, res, next) {//POST ajouter un nouveau livre.
    const bookObject = JSON.parse(req.body.book);//analyse de l'objet pour otbenir un objet utilisable.
    delete bookObject._id;//Supp de l'id et de l'userId par mesure de sécurité,
    delete bookObject._userId;//l'userId est remplacé en base de données par le _userId extrait du token par le middleware d'authentification. 
+   console.log('req.file.originalname', req.file.originalname);
+   console.log('req.file', req.file);
+   console.log('req.body', req.body);
    const book = new Book({
        ...bookObject,
        userId: req.auth.userId,
-       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
+       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.originalname}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
    }); 
-   book.save()//enregistrement de cet objet dans la base de données.  
+   await book.save()//enregistrement de cet objet dans la base de données.  
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
    .catch(error => { res.status(400).json( { error })})
 };
