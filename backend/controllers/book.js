@@ -65,7 +65,7 @@ async function addNewBook (req, res, next) {//POST ajouter un nouveau livre.
    const nameWithoutExtension = parts.slice(0, -1).join(".");//Retire le format de l'image
    const newFilename = `${nameWithoutExtension}.${newExtension}`;//Ajoute au titre le format .wpb
 
-   console.log(newFilename); // Résultat : "le seigneur des anneaux.webp"
+   //console.log(newFilename); 
 
    const book = new Book({
        ...bookObject,
@@ -145,37 +145,42 @@ async function rateBook(req, res) {
     const id = req.params.bookId;
     const { userId, rating } = req.body;
     if (userId !== req.auth.userId) {
-          return res.status(401).json({ message: 'Unauthorized access' });
+          return res.status(401).json({ message: 'accès non autorisé' });
     }
     try {
-          // Validate rating range
+          // Valider la plage de notation
           if (rating < 1 || rating > 5) {
                 return res.status(400).json({
-                      message: 'Invalid rating. Rating must be between 1 and 5',
+                      message: 'Note invalide. La note doit être entre 1 et 5.',
                 });
           }
-          // Find the book by its ID
+          // Trouver le livre par son ID.
           const book = await Book.findById(id);
-          // Check if the book exists
+          // Vérifier si le livre existe.
           if (!book) {
-                return res.status(404).json({ message: 'Book not found' });
+                return res.status(404).json({ message: 'Livre non trouvé' });
           }
-          // Check if the user has already rated the book
+          // Vérification si l'utilisateur e déjà évalué ce livre
           const existingRating = book.ratings.find(
                 (r) => r.userId === userId
           );
+        //   Le r est une variable temporaire utilisée comme paramètre de la fonction de rappel passée à la méthode find().
+        // Cette fonction de rappel est une fonction fléchée qui prend chaque élément du tableau book.ratings (qui représente les évaluations du livre)
+        // et vérifie si l'ID de l'utilisateur (userId) correspond à l'ID de l'évaluation de cet élément. 
+        //Le r est simplement un raccourci pour représenter chaque élément d'évaluation dans ce contexte, "r" ou "rating".
+        
           if (existingRating) {
                 return res.status(400).json({
-                      message: 'User has already rated this book',
+                      message: "L'utilisateur a déjà évalué ce livre.",
                 });
           }
-          // Add the new rating to the book's ratings array
+          // Ajout de la nouvelle note au tableau des notes du livre.
           book.ratings.push({ userId, grade: rating });
-          // Calculate the new average rating
+          // Calcul de la nouvelle note moyenne.
           const totalRatings = book.ratings.length;
           const sumGrades = book.ratings.reduce((acc, r) => acc + r.grade, 0);
           book.averageRating = (sumGrades / totalRatings).toFixed(1);
-          // Save the updated book
+          // Enregistre le livre mis à jour.
           const updatedBook = await book.save();
 
           return res.status(200).json(updatedBook);
