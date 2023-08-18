@@ -26,7 +26,7 @@ bookSchema.path('title').validate(
       function (value) {
             return value.length <= 100;
       },
-      { message: 'Title must not exceed 100 characters.' }
+      { message: 'Le titre ne doit pas dépasser 100 caractères' }
 );
 
 bookSchema.path('year').validate(function (value) {

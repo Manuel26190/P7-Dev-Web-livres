@@ -1,6 +1,6 @@
 const Book = require('../models/Book');
 const fs = require('fs');
-const multer = require('multer');
+//const multer = require('multer');
 
 async function getAllBooks(req, res, next) {//middleware get pour tous les livres
     try {
@@ -57,10 +57,20 @@ async function addNewBook (req, res, next) {//POST ajouter un nouveau livre.
    //console.log('req.file.originalname', req.file.originalname);
    //console.log('req.file', req.file);
    //console.log('req.body', req.body);
+   const filename = "le seigneur des anneaux.jpeg";
+   const newExtension = "webp";
+
+   // Divise le nom de fichier en deux parties : le nom de base et l'extension
+   const parts = filename.split(".");//Divise la chaîne ("nom du livre"."format de l'image")
+   const nameWithoutExtension = parts.slice(0, -1).join(".");//Retire le format de l'image
+   const newFilename = `${nameWithoutExtension}.${newExtension}`;//Ajoute au titre le format .wpb
+
+   console.log(newFilename); // Résultat : "le seigneur des anneaux.webp"
+
    const book = new Book({
        ...bookObject,
        userId: req.auth.userId,
-       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.originalname}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
+       imageUrl: `${req.protocol}://${req.get('host')}/images/${newFilename}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
    }); 
    await book.save()//enregistrement de cet objet dans la base de données.  
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
