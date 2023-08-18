@@ -13,12 +13,26 @@ async function getAllBooks(req, res, next) {//middleware get pour tous les livre
     }
 };
 
+// async function getAllBooks(req, res, next) {
+//     try {
+//         const books = await Book.find({});
+//         const booksWithImageUrls = books.map(book => ({
+//             ...book.toObject(),
+//             imageUrl: `${req.protocol}://${req.get('host')}/images/${book.imageUrl}`
+//         }));
+//         return res.status(200).json(booksWithImageUrls);
+//     } catch (error) {
+//         return res.status(400).json({ error: error });
+//     }
+// };
+
 async function getOneBook(req, res, next) {//middleware get pour un livre
-    const id = req.params.bookId;//récupére le paramètre bookId d'une requête 
+    const id = req.params.bookId;//récupére le paramètre bookId d'une requête
+    //console.log('req.params.bookId', id); 
         try {
             const book = await Book.findOne({ _id: id });
             if (!book) {
-                return res.status(404).json({ message: 'Livre nno trouvé' });
+                return res.status(404).json({ message: 'Livre non trouvé' });
             }
             return res.status(200).json(book);
         } catch (error) {
@@ -41,9 +55,9 @@ async function addNewBook (req, res, next) {//POST ajouter un nouveau livre.
    const bookObject = JSON.parse(req.body.book);//analyse de l'objet pour otbenir un objet utilisable.
    delete bookObject._id;//Supp de l'id et de l'userId par mesure de sécurité,
    delete bookObject._userId;//l'userId est remplacé en base de données par le _userId extrait du token par le middleware d'authentification. 
-   console.log('req.file.originalname', req.file.originalname);
-   console.log('req.file', req.file);
-   console.log('req.body', req.body);
+   //console.log('req.file.originalname', req.file.originalname);
+   //console.log('req.file', req.file);
+   //console.log('req.body', req.body);
    const book = new Book({
        ...bookObject,
        userId: req.auth.userId,

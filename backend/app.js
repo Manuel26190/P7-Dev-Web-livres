@@ -15,7 +15,7 @@ async function initializeServer() {
         
 //indique à Express qu'il faut gérer la ressource images de manière statique          
          
-        app.use('/books/images', express.static('images'));       
+        app.use('/images', express.static('images'));       
         app.use('/api/books', booksRoutes); // Routes books.
         app.use('/api/auth', userRoutes); // Routes user.
   } catch (error) {
