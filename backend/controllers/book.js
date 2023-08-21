@@ -57,20 +57,20 @@ async function addNewBook (req, res, next) {//POST ajouter un nouveau livre.
    //console.log('req.file.originalname', req.file.originalname);
    //console.log('req.file', req.file);
    //console.log('req.body', req.body);
-   const filename = "le seigneur des anneaux.jpeg";
+   const filename = req.file.originalname;
    const newExtension = "webp";
 
    // Divise le nom de fichier en deux parties : le nom de base et l'extension
    const parts = filename.split(".");//Divise la chaîne ("nom du livre"."format de l'image")
    const nameWithoutExtension = parts.slice(0, -1).join(".");//Retire le format de l'image
-   const newFilename = `${nameWithoutExtension}.${newExtension}`;//Ajoute au titre le format .wpb
+   const newFilename = `${nameWithoutExtension}.${newExtension}`;//Ajoute au titre le format .wepb
 
    //console.log(newFilename); 
 
    const book = new Book({
        ...bookObject,
        userId: req.auth.userId,
-       imageUrl: `${req.protocol}://${req.get('host')}/images/${newFilename}`//résolution de l'URL http://localhost:3000/images/"nom de fichier".
+       imageUrl: `${req.protocol}://${req.get('host')}/images/${newFilename}`//résolution de l'URL http://localhost:4000/images/"nom de fichier".
    }); 
    await book.save()//enregistrement de cet objet dans la base de données.  
    .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
@@ -161,13 +161,13 @@ async function rateBook(req, res) {
                 return res.status(404).json({ message: 'Livre non trouvé' });
           }
           // Vérification si l'utilisateur e déjà évalué ce livre
-          const existingRating = book.ratings.find(
-                (r) => r.userId === userId
-          );
-        //   Le r est une variable temporaire utilisée comme paramètre de la fonction de rappel passée à la méthode find().
+          //   Le r est une variable temporaire utilisée comme paramètre de la fonction de rappel passée à la méthode find().
         // Cette fonction de rappel est une fonction fléchée qui prend chaque élément du tableau book.ratings (qui représente les évaluations du livre)
         // et vérifie si l'ID de l'utilisateur (userId) correspond à l'ID de l'évaluation de cet élément. 
         //Le r est simplement un raccourci pour représenter chaque élément d'évaluation dans ce contexte, "r" ou "rating".
+          const existingRating = book.ratings.find(
+                (r) => r.userId === userId
+          );        
         
           if (existingRating) {
                 return res.status(400).json({
@@ -178,6 +178,22 @@ async function rateBook(req, res) {
           book.ratings.push({ userId, grade: rating });
           // Calcul de la nouvelle note moyenne.
           const totalRatings = book.ratings.length;
+
+          const bookRating = book.ratings;
+          console.log('bookRatings', bookRating );
+
+
+        //   let sommeGrade = 0;
+
+        //   bookRating.forEach(element => {
+        //     //Premier tour : sommeGrade = 0; 
+        //     //second tour : sommeGrade = 4;
+        //     sommeGrade = element.grade + sommeGrade;
+
+        //     //premier tour : sommeGrade = 4;
+        //     //second tour : sommeGrade = 3;
+        //   });    
+
           const sumGrades = book.ratings.reduce((acc, r) => acc + r.grade, 0);
           book.averageRating = (sumGrades / totalRatings).toFixed(1);
           // Enregistre le livre mis à jour.
@@ -282,3 +298,4 @@ module.exports = {
 //           res.status(500).json({ message: error.message });
 //     }
 // }
+
